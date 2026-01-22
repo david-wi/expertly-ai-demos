@@ -1125,7 +1125,7 @@ saveDraft();
 
 // Hidden demo trigger: triple-click the logo
 // Animated typing function
-async function typeIntoField(fieldId, value, charDelay = 30) {
+async function typeIntoField(fieldId, value, charDelay = 25) {
   const el = $(fieldId);
   if (!el) return;
   el.focus();
@@ -1210,7 +1210,7 @@ async function runDemoFill() {
   await setSelectField("specialOccasion", "Anniversary");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("activityNotes", "Guest prefers morning tee time. Traveling with spouse. May need club rentals.", 30);
+  await typeIntoField("activityNotes", "Guest prefers morning tee time. Traveling with spouse. May need club rentals.", 25);
   await new Promise(r => setTimeout(r, fieldDelay));
 
   await typeIntoField("adults", "2", 100);
