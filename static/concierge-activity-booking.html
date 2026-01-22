@@ -1151,71 +1151,78 @@ async function setSelectField(fieldId, value, delay = 150) {
 async function runDemoFill() {
   const fieldDelay = 250; // pause between fields
 
-  // Guest info - parsed from email
-  await typeIntoField("guestFirstName", "George");
+  // Guest info
+  await typeIntoField("guestFirstName", "David");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("guestLastName", "Harris");
+  await typeIntoField("guestLastName", "Chen");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("guestEmail", "tycointernational@proton.me");
+  await typeIntoField("guestEmail", "david.chen@techcorp.com");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("guestPhone", "+1 555 867 5309");
+  await typeIntoField("guestPhone", "(415) 555-0142");
   await new Promise(r => setTimeout(r, fieldDelay));
 
   await setSelectField("preferredContact", "Email");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("roomNumber", "1420");
+  await typeIntoField("roomNumber", "1808");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("reservationNumber", "BM2026-78432");
+  await typeIntoField("reservationNumber", "RES-445521");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  // Stay dates
+  $("arrivalDate").value = "2026-01-25";
+  await new Promise(r => setTimeout(r, 150));
+
+  $("departureDate").value = "2026-01-29";
   await new Promise(r => setTimeout(r, fieldDelay));
 
   // Activity section - set category first to populate dropdowns
-  $("activityCategory").value = "Golf Tee Times";
+  $("activityCategory").value = "Spa";
   $("activityCategory").dispatchEvent(new Event("change", { bubbles: true }));
-  updateActivityDropdown("Golf Tee Times");
-  updateLocationDropdown("Golf Tee Times");
+  updateActivityDropdown("Spa");
+  updateLocationDropdown("Spa");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await setSelectField("activityName", "Royal Blue - 18 Holes");
+  await setSelectField("activityName", "ESPA Couples Massage");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await setSelectField("activityLocation", "Royal Blue Golf Course");
+  await setSelectField("activityLocation", "ESPA Spa");
   await new Promise(r => setTimeout(r, fieldDelay));
 
   await setSelectField("providerName", "On-property");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  // Date parsed from email ("on the 24th")
-  const activityDate = new Date();
-  activityDate.setDate(24);
-  if (activityDate < new Date()) activityDate.setMonth(activityDate.getMonth() + 1);
-  $("activityDate").value = activityDate.toISOString().split('T')[0];
+  // Activity date and time
+  $("activityDate").value = "2026-01-27";
   await new Promise(r => setTimeout(r, 150));
 
-  $("startTime").value = "10:30";
+  $("startTime").value = "14:00";
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await setSelectField("timeFlex", "+/- 30 minutes");
+  await setSelectField("timeFlex", "Fixed time only");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await setSelectField("specialOccasion", "Anniversary");
+  // Special requests / notes
+  await typeIntoField("activityNotes", "Wife has lavender allergy - use unscented products only. Requires wheelchair accessible room.", 25);
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  // Notes compiled from email content
-  await typeIntoField("activityNotes", "Both guests need club rentals. Wife is learning - prefer relaxed pace. Anniversary trip.", 25);
-  await new Promise(r => setTimeout(r, fieldDelay));
-
+  // Party size
   await typeIntoField("adults", "2", 100);
   await new Promise(r => setTimeout(r, fieldDelay));
 
+  // Payment
   await setSelectField("paymentMethod", "Charge to room");
   await new Promise(r => setTimeout(r, 150));
 
   await setSelectField("sendConfirmation", "yes");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  // Follow-up due (day before arrival)
+  $("followUpDue").value = "2026-01-24T12:00";
 }
 
 $("logoMark").addEventListener("click", (e) => {
