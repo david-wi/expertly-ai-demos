@@ -1150,9 +1150,7 @@ async function setSelectField(fieldId, value, delay = 150) {
 async function runDemoFill() {
   const fieldDelay = 250; // pause between fields
 
-  await typeIntoField("agentName", "Maria Santos");
-  await new Promise(r => setTimeout(r, fieldDelay));
-
+  // Guest info - parsed from email
   await typeIntoField("guestFirstName", "Jordan");
   await new Promise(r => setTimeout(r, fieldDelay));
 
@@ -1174,14 +1172,6 @@ async function runDemoFill() {
   await typeIntoField("reservationNumber", "BM2026-78432");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  $("arrivalDate").value = new Date().toISOString().split('T')[0];
-  await new Promise(r => setTimeout(r, 150));
-  $("departureDate").value = new Date(Date.now() + 5*24*60*60*1000).toISOString().split('T')[0];
-  await new Promise(r => setTimeout(r, fieldDelay));
-
-  await setSelectField("vipFlag", "no");
-  await new Promise(r => setTimeout(r, fieldDelay));
-
   // Activity section - set category first to populate dropdowns
   $("activityCategory").value = "Golf Tee Times";
   $("activityCategory").dispatchEvent(new Event("change", { bubbles: true }));
@@ -1198,7 +1188,11 @@ async function runDemoFill() {
   await setSelectField("providerName", "On-property");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  $("activityDate").value = new Date(Date.now() + 2*24*60*60*1000).toISOString().split('T')[0];
+  // Date parsed from email ("on the 24th")
+  const activityDate = new Date();
+  activityDate.setDate(24);
+  if (activityDate < new Date()) activityDate.setMonth(activityDate.getMonth() + 1);
+  $("activityDate").value = activityDate.toISOString().split('T')[0];
   await new Promise(r => setTimeout(r, 150));
 
   $("startTime").value = "10:30";
@@ -1210,33 +1204,17 @@ async function runDemoFill() {
   await setSelectField("specialOccasion", "Anniversary");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("activityNotes", "Guest prefers morning tee time. Traveling with spouse. May need club rentals.", 25);
+  // Notes compiled from email content
+  await typeIntoField("activityNotes", "Both guests need club rentals. Wife is learning - prefer relaxed pace. Anniversary trip.", 25);
   await new Promise(r => setTimeout(r, fieldDelay));
 
   await typeIntoField("adults", "2", 100);
-  await new Promise(r => setTimeout(r, 150));
-  await typeIntoField("children", "0", 100);
   await new Promise(r => setTimeout(r, fieldDelay));
-
-  await setSelectField("currency", "USD");
-  await new Promise(r => setTimeout(r, 150));
-
-  await typeIntoField("estimatedCost", "350");
-  await new Promise(r => setTimeout(r, fieldDelay));
-
-  await setSelectField("depositRequired", "No");
-  await new Promise(r => setTimeout(r, 150));
 
   await setSelectField("paymentMethod", "Charge to room");
   await new Promise(r => setTimeout(r, 150));
 
   await setSelectField("sendConfirmation", "yes");
-  await new Promise(r => setTimeout(r, fieldDelay));
-
-  await setSelectField("priority", "Normal");
-  await new Promise(r => setTimeout(r, 150));
-
-  await setSelectField("status", "New");
 }
 
 $("logoMark").addEventListener("click", (e) => {
