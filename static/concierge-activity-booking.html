@@ -2,7 +2,7 @@
 <!--
   HIDDEN DEMO TRIGGER:
   Triple-click the logo (gradient square in top-left) to auto-fill the form
-  with sample data after a 2-second delay.
+  with sample data after a 4-second delay. Fields fill with animated typing.
 -->
 <html lang="en">
 <head>
@@ -435,18 +435,24 @@ Connected
 </select>
 </div>
 <div>
-<label for="activityName">Activity name</label>
-<input id="activityName" name="activityName" placeholder="e.g., Royal Blue tee time / Spa treatment / Cabana" />
+<label for="activityName">Activity</label>
+<select id="activityName" name="activityName">
+<option value="">Select category first…</option>
+</select>
 </div>
 </div>
 <div class="grid2">
 <div>
-<label for="providerName">Provider / vendor (optional)</label>
-<input id="providerName" name="providerName" placeholder="If applicable" />
+<label for="providerName">Provider</label>
+<select id="providerName" name="providerName">
+<option value="">Auto-fills from activity</option>
+</select>
 </div>
 <div>
-<label for="activityLocation">Location (optional)</label>
-<input id="activityLocation" name="activityLocation" placeholder="On-property venue, meeting point, etc." />
+<label for="activityLocation">Location</label>
+<select id="activityLocation" name="activityLocation">
+<option value="">Auto-fills from activity</option>
+</select>
 </div>
 </div>
 <div class="grid3">
@@ -476,7 +482,19 @@ Connected
 </div>
 <div>
 <label for="specialOccasion">Special occasion (optional)</label>
-<input id="specialOccasion" name="specialOccasion" placeholder="Birthday, anniversary, etc." />
+<select id="specialOccasion" name="specialOccasion">
+<option value="">None</option>
+<option>Birthday</option>
+<option>Anniversary</option>
+<option>Honeymoon</option>
+<option>Proposal</option>
+<option>Graduation</option>
+<option>Retirement</option>
+<option>Family Reunion</option>
+<option>Bachelor/Bachelorette</option>
+<option>Babymoon</option>
+<option>Other (see notes)</option>
+</select>
 </div>
 </div>
 <label for="activityNotes">Guest notes / preferences</label>
@@ -611,23 +629,138 @@ Selecting an item fills Category, Activity name, Location, and Provider (when av
 <div class="toast" id="toast"></div>
 <script>
 // -------------------------
-// Catalog entries (public-facing categories aligned to Baha Mar activities list)
+// Baha Mar Activity Catalog - organized by category
 // -------------------------
-const ACTIVITY_CATALOG = [
-{ category: "Kids Club", name: "Kids Club session", location: "Kids Club", provider: "On-property" },
-{ category: "Wildlife Experiences", name: "Wildlife encounter", location: "Sanctuary / Aviary", provider: "On-property" },
-{ category: "Art Workshops & Tours", name: "Art workshop", location: "Art studio / gallery", provider: "On-property" },
-{ category: "Tennis & Pickleball", name: "Court rental or lesson", location: "Tennis Center", provider: "On-property" },
-{ category: "Golf Tee Times", name: "Golf tee time", location: "Golf course", provider: "On-property" },
-{ category: "Mini Golf", name: "Mini golf", location: "Mini golf course", provider: "On-property" },
-{ category: "Spa", name: "Spa treatment", location: "Spa", provider: "On-property" },
-{ category: "Cabanas / Daybeds / Loungers", name: "Cabana reservation", location: "Pool / beach", provider: "On-property" },
-{ category: "Interactive Cooking Experience", name: "Cooking experience", location: "Culinary venue", provider: "On-property" },
-{ category: "Off-Property Excursion", name: "Day trip excursion", location: "Off-property", provider: "Third-party" },
-{ category: "Airport Transfer", name: "Airport transfer", location: "Arrival / Departure", provider: "Car service" },
-{ category: "Mobility Equipment", name: "Wheelchair / scooter rental", location: "Delivery to room", provider: "Mobility vendor" },
-{ category: "Semi-Private Air Travel", name: "Semi-private flight inquiry", location: "Airport", provider: "Air operator" },
-];
+const ACTIVITY_CATALOG = {
+"Kids Club": [
+  { name: "Explorers Club - Half Day", location: "Explorers Club, Grand Hyatt", provider: "On-property" },
+  { name: "Explorers Club - Full Day", location: "Explorers Club, Grand Hyatt", provider: "On-property" },
+  { name: "Kids Night Out", location: "Explorers Club, Grand Hyatt", provider: "On-property" },
+  { name: "Teen Zone Access", location: "Teen Center", provider: "On-property" },
+],
+"Wildlife Experiences": [
+  { name: "Flamingo Encounter", location: "Sanctuary, Cable Beach", provider: "On-property" },
+  { name: "Sea Turtle Education Program", location: "Sanctuary, Cable Beach", provider: "On-property" },
+  { name: "Bird Aviary Tour", location: "Aviary, Resort Grounds", provider: "On-property" },
+  { name: "Marine Habitat Tour", location: "Sanctuary, Cable Beach", provider: "On-property" },
+],
+"Art Workshops & Tours": [
+  { name: "Junkanoo Drum Workshop", location: "Cultural Center", provider: "On-property" },
+  { name: "Bahamian Art Gallery Tour", location: "Gallery, Convention Center", provider: "On-property" },
+  { name: "Craft Workshop - Adults", location: "Art Studio", provider: "On-property" },
+  { name: "Craft Workshop - Kids", location: "Explorers Club", provider: "On-property" },
+],
+"Tennis & Pickleball": [
+  { name: "Tennis Court Rental (1 hour)", location: "Racquet Club", provider: "On-property" },
+  { name: "Tennis Lesson - Private", location: "Racquet Club", provider: "On-property" },
+  { name: "Tennis Lesson - Group", location: "Racquet Club", provider: "On-property" },
+  { name: "Pickleball Court Rental", location: "Racquet Club", provider: "On-property" },
+  { name: "Pickleball Lesson", location: "Racquet Club", provider: "On-property" },
+  { name: "Racquet Rental", location: "Racquet Club", provider: "On-property" },
+],
+"Golf Tee Times": [
+  { name: "Royal Blue - 18 Holes", location: "Royal Blue Golf Course", provider: "On-property" },
+  { name: "Royal Blue - 9 Holes", location: "Royal Blue Golf Course", provider: "On-property" },
+  { name: "Golf Lesson - Private", location: "Royal Blue Golf Course", provider: "On-property" },
+  { name: "Golf Lesson - Group", location: "Royal Blue Golf Course", provider: "On-property" },
+  { name: "Club Rental - Full Set", location: "Royal Blue Pro Shop", provider: "On-property" },
+],
+"Mini Golf": [
+  { name: "Mini Golf Round", location: "Mini Golf Course, Resort Grounds", provider: "On-property" },
+],
+"Spa": [
+  { name: "ESPA Massage - 60 min", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Massage - 90 min", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Couples Massage", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Facial Treatment", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Body Wrap", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Manicure", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Pedicure", location: "ESPA Spa", provider: "On-property" },
+  { name: "ESPA Hair Styling", location: "ESPA Salon", provider: "On-property" },
+  { name: "Spa Day Package", location: "ESPA Spa", provider: "On-property" },
+],
+"Cabanas / Daybeds / Loungers": [
+  { name: "Beach Cabana - Full Day", location: "Cable Beach", provider: "On-property" },
+  { name: "Beach Cabana - Half Day", location: "Cable Beach", provider: "On-property" },
+  { name: "Pool Cabana - Dean's Blue Hole", location: "Dean's Blue Hole Pool", provider: "On-property" },
+  { name: "Pool Cabana - Sanctuary Pool", location: "Sanctuary Pool", provider: "On-property" },
+  { name: "Pool Daybed Rental", location: "Various Pools", provider: "On-property" },
+  { name: "Beach Lounge Chair (Reserved)", location: "Cable Beach", provider: "On-property" },
+],
+"Interactive Cooking Experience": [
+  { name: "Bahamian Cooking Class", location: "Café Boulud Kitchen", provider: "On-property" },
+  { name: "Sushi Making Class", location: "Katsuya Kitchen", provider: "On-property" },
+  { name: "Kids Cooking Class", location: "Explorers Club Kitchen", provider: "On-property" },
+  { name: "Mixology Class", location: "Drift Bar", provider: "On-property" },
+],
+"Treasure Hunt / App Activity": [
+  { name: "Resort Treasure Hunt - Kids", location: "Resort Grounds", provider: "On-property" },
+  { name: "Resort Treasure Hunt - Family", location: "Resort Grounds", provider: "On-property" },
+],
+"Off-Property Excursion": [
+  { name: "Swimming Pigs Excursion", location: "Exuma (Day Trip)", provider: "Third-party" },
+  { name: "Nassau City Tour", location: "Downtown Nassau", provider: "Third-party" },
+  { name: "Catamaran Snorkel Cruise", location: "Departs Marina", provider: "Third-party" },
+  { name: "Private Boat Charter", location: "Departs Marina", provider: "Third-party" },
+  { name: "Scuba Diving Excursion", location: "Various Sites", provider: "Third-party" },
+  { name: "Deep Sea Fishing", location: "Departs Marina", provider: "Third-party" },
+  { name: "Jet Ski Rental", location: "Cable Beach", provider: "Third-party" },
+  { name: "Parasailing", location: "Cable Beach", provider: "Third-party" },
+  { name: "Atlantis Day Pass", location: "Atlantis Resort", provider: "Third-party" },
+],
+"Mascot / Character Booking": [
+  { name: "Character Meet & Greet", location: "Resort Grounds", provider: "On-property" },
+  { name: "Character Room Visit", location: "Guest Room", provider: "On-property" },
+  { name: "Character at Dinner", location: "Selected Restaurants", provider: "On-property" },
+],
+"Airport Transfer": [
+  { name: "Airport Arrival Transfer", location: "Nassau Airport (NAS) → Resort", provider: "Resort Transport" },
+  { name: "Airport Departure Transfer", location: "Resort → Nassau Airport (NAS)", provider: "Resort Transport" },
+  { name: "Private Car Service - Arrival", location: "Nassau Airport (NAS) → Resort", provider: "Executive Transport" },
+  { name: "Private Car Service - Departure", location: "Resort → Nassau Airport (NAS)", provider: "Executive Transport" },
+],
+"Mobility Equipment": [
+  { name: "Wheelchair Rental - Daily", location: "Delivery to Room", provider: "Mobility Vendor" },
+  { name: "Wheelchair Rental - Weekly", location: "Delivery to Room", provider: "Mobility Vendor" },
+  { name: "Mobility Scooter Rental - Daily", location: "Delivery to Room", provider: "Mobility Vendor" },
+  { name: "Mobility Scooter Rental - Weekly", location: "Delivery to Room", provider: "Mobility Vendor" },
+  { name: "Beach Wheelchair", location: "Cable Beach", provider: "On-property" },
+],
+"Semi-Private Air Travel": [
+  { name: "Semi-Private Flight Inquiry", location: "Nassau Airport (NAS)", provider: "Air Operator" },
+  { name: "Private Charter Inquiry", location: "Nassau Airport (NAS)", provider: "Air Operator" },
+],
+"Other": [
+  { name: "Custom Request", location: "TBD", provider: "TBD" },
+],
+};
+
+// Flatten for catalog search
+const ACTIVITY_CATALOG_FLAT = Object.entries(ACTIVITY_CATALOG).flatMap(([cat, items]) =>
+  items.map(it => ({ ...it, category: cat }))
+);
+
+// Location options per category (for the location dropdown)
+const LOCATION_OPTIONS = {
+"Kids Club": ["Explorers Club, Grand Hyatt", "Teen Center"],
+"Wildlife Experiences": ["Sanctuary, Cable Beach", "Aviary, Resort Grounds"],
+"Art Workshops & Tours": ["Cultural Center", "Gallery, Convention Center", "Art Studio", "Explorers Club"],
+"Tennis & Pickleball": ["Racquet Club"],
+"Golf Tee Times": ["Royal Blue Golf Course", "Royal Blue Pro Shop"],
+"Mini Golf": ["Mini Golf Course, Resort Grounds"],
+"Spa": ["ESPA Spa", "ESPA Salon"],
+"Cabanas / Daybeds / Loungers": ["Cable Beach", "Dean's Blue Hole Pool", "Sanctuary Pool", "Various Pools"],
+"Interactive Cooking Experience": ["Café Boulud Kitchen", "Katsuya Kitchen", "Explorers Club Kitchen", "Drift Bar"],
+"Treasure Hunt / App Activity": ["Resort Grounds"],
+"Off-Property Excursion": ["Exuma (Day Trip)", "Downtown Nassau", "Departs Marina", "Various Sites", "Cable Beach", "Atlantis Resort"],
+"Mascot / Character Booking": ["Resort Grounds", "Guest Room", "Selected Restaurants"],
+"Airport Transfer": ["Nassau Airport (NAS) → Resort", "Resort → Nassau Airport (NAS)"],
+"Mobility Equipment": ["Delivery to Room", "Cable Beach"],
+"Semi-Private Air Travel": ["Nassau Airport (NAS)"],
+"Other": ["TBD"],
+};
+
+const PROVIDER_OPTIONS = ["On-property", "Third-party", "Resort Transport", "Executive Transport", "Mobility Vendor", "Air Operator", "TBD"];
 
 const $ = (id) => document.getElementById(id);
 
@@ -828,9 +961,11 @@ if (id) setField(id, v);
 }
 
 // Expose a stable hook for your toolbar/extension
-window.applySuperPaste = function(payload){
+window.applySuperPaste = function(payload, options = {}){
 applyPayload(payload);
-toast("Applied payload via <strong>applySuperPaste</strong>.");
+if (!options.silent) {
+  toast("Applied payload via <strong>applySuperPaste</strong>.");
+}
 };
 
 // -------------------------
@@ -851,7 +986,7 @@ function renderCatalog(filter){
 const q = (filter || "").trim().toLowerCase();
 const list = $("catalogList");
 list.innerHTML = "";
-const items = ACTIVITY_CATALOG.filter(it => {
+const items = ACTIVITY_CATALOG_FLAT.filter(it => {
 if (!q) return true;
 return (it.name + " " + it.category + " " + (it.location||"") + " " + (it.provider||""))
 .toLowerCase().includes(q);
@@ -875,10 +1010,15 @@ div.innerHTML = `
 <div class="badge">${escapeHtml(it.provider || "—")}</div>
 `;
 div.addEventListener("click", () => {
-setField("activityCategory", it.category);
-setField("activityName", it.name);
-if (it.location) setField("activityLocation", it.location);
-if (it.provider) setField("providerName", it.provider);
+// Set category first and update dropdowns
+$("activityCategory").value = it.category;
+updateActivityDropdown(it.category);
+updateLocationDropdown(it.category);
+updateProviderDropdown();
+// Then set the values
+$("activityName").value = it.name;
+$("activityLocation").value = it.location || "";
+$("providerName").value = it.provider || "";
 closeCatalog();
 toast("Filled from catalog selection.");
 });
@@ -894,6 +1034,78 @@ return String(str || "")
 .replaceAll('"',"&quot;")
 .replaceAll("'","&#039;");
 }
+
+// -------------------------
+// Dynamic dropdown population
+// -------------------------
+function updateActivityDropdown(category) {
+  const select = $("activityName");
+  select.innerHTML = "";
+
+  if (!category || !ACTIVITY_CATALOG[category]) {
+    select.innerHTML = '<option value="">Select category first…</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value="">Select activity…</option>';
+  ACTIVITY_CATALOG[category].forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.name;
+    opt.textContent = item.name;
+    opt.dataset.location = item.location;
+    opt.dataset.provider = item.provider;
+    select.appendChild(opt);
+  });
+}
+
+function updateLocationDropdown(category) {
+  const select = $("activityLocation");
+  select.innerHTML = '<option value="">Select…</option>';
+
+  const locations = LOCATION_OPTIONS[category] || [];
+  locations.forEach(loc => {
+    const opt = document.createElement("option");
+    opt.value = loc;
+    opt.textContent = loc;
+    select.appendChild(opt);
+  });
+}
+
+function updateProviderDropdown() {
+  const select = $("providerName");
+  select.innerHTML = '<option value="">Select…</option>';
+  PROVIDER_OPTIONS.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    select.appendChild(opt);
+  });
+}
+
+// When category changes, update activity dropdown
+$("activityCategory").addEventListener("change", (e) => {
+  const cat = e.target.value;
+  updateActivityDropdown(cat);
+  updateLocationDropdown(cat);
+  updateProviderDropdown();
+  // Clear selections
+  $("activityLocation").value = "";
+  $("providerName").value = "";
+});
+
+// When activity is selected, auto-fill location and provider
+$("activityName").addEventListener("change", (e) => {
+  const selected = e.target.selectedOptions[0];
+  if (selected && selected.dataset.location) {
+    $("activityLocation").value = selected.dataset.location;
+  }
+  if (selected && selected.dataset.provider) {
+    $("providerName").value = selected.dataset.provider;
+  }
+});
+
+// Initialize provider dropdown
+updateProviderDropdown();
 
 // -------------------------
 // Wiring
@@ -912,44 +1124,127 @@ saveDraft();
 });
 
 // Hidden demo trigger: triple-click the logo
-$("logoMark").addEventListener("click", (e) => {
-if (e.detail === 3) {
-toast("Loading demo data...");
-setTimeout(() => {
-const demoData = {
-agentName: "Maria Santos",
-guestFirstName: "Jordan",
-guestLastName: "Rivera",
-guestEmail: "jordan.rivera@email.com",
-guestPhone: "+1 555 867 5309",
-preferredContact: "Email",
-roomNumber: "1420",
-reservationNumber: "BM2026-78432",
-arrivalDate: new Date().toISOString().split('T')[0],
-departureDate: new Date(Date.now() + 5*24*60*60*1000).toISOString().split('T')[0],
-vipFlag: "no",
-activityCategory: "Golf Tee Times",
-activityName: "Royal Blue Golf Course - Tee Time",
-providerName: "On-property",
-activityLocation: "Golf course, main clubhouse",
-activityDate: new Date(Date.now() + 2*24*60*60*1000).toISOString().split('T')[0],
-startTime: "10:30",
-timeFlex: "+/- 30 minutes",
-specialOccasion: "Anniversary trip",
-activityNotes: "Guest prefers morning tee time. Traveling with spouse. May need club rentals - please confirm availability.",
-adults: "2",
-children: "0",
-currency: "USD",
-estimatedCost: "350",
-depositRequired: "No",
-paymentMethod: "Charge to room",
-sendConfirmation: "yes",
-priority: "Normal",
-status: "New"
-};
-window.applySuperPaste(demoData);
-}, 2000);
+// Animated typing function
+async function typeIntoField(fieldId, value, charDelay = 35) {
+  const el = $(fieldId);
+  if (!el) return;
+  el.focus();
+  el.value = "";
+  for (let i = 0; i < value.length; i++) {
+    el.value += value[i];
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    await new Promise(r => setTimeout(r, charDelay));
+  }
+  el.dispatchEvent(new Event("change", { bubbles: true }));
 }
+
+async function setSelectField(fieldId, value, delay = 150) {
+  const el = $(fieldId);
+  if (!el) return;
+  el.focus();
+  await new Promise(r => setTimeout(r, delay));
+  el.value = value;
+  el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+async function runDemoFill() {
+  const fieldDelay = 300; // pause between fields
+
+  await typeIntoField("agentName", "Maria Santos");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("guestFirstName", "Jordan");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("guestLastName", "Rivera");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("guestEmail", "jordan.rivera@email.com");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("guestPhone", "+1 555 867 5309");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("preferredContact", "Email");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("roomNumber", "1420");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("reservationNumber", "BM2026-78432");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  $("arrivalDate").value = new Date().toISOString().split('T')[0];
+  await new Promise(r => setTimeout(r, 150));
+  $("departureDate").value = new Date(Date.now() + 5*24*60*60*1000).toISOString().split('T')[0];
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("vipFlag", "no");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  // Activity section - set category first to populate dropdowns
+  $("activityCategory").value = "Golf Tee Times";
+  $("activityCategory").dispatchEvent(new Event("change", { bubbles: true }));
+  updateActivityDropdown("Golf Tee Times");
+  updateLocationDropdown("Golf Tee Times");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("activityName", "Royal Blue - 18 Holes");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("activityLocation", "Royal Blue Golf Course");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("providerName", "On-property");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  $("activityDate").value = new Date(Date.now() + 2*24*60*60*1000).toISOString().split('T')[0];
+  await new Promise(r => setTimeout(r, 150));
+
+  $("startTime").value = "10:30";
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("timeFlex", "+/- 30 minutes");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("specialOccasion", "Anniversary");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("activityNotes", "Guest prefers morning tee time. Traveling with spouse. May need club rentals.", 20);
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await typeIntoField("adults", "2", 100);
+  await new Promise(r => setTimeout(r, 150));
+  await typeIntoField("children", "0", 100);
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("currency", "USD");
+  await new Promise(r => setTimeout(r, 150));
+
+  await typeIntoField("estimatedCost", "350");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("depositRequired", "No");
+  await new Promise(r => setTimeout(r, 150));
+
+  await setSelectField("paymentMethod", "Charge to room");
+  await new Promise(r => setTimeout(r, 150));
+
+  await setSelectField("sendConfirmation", "yes");
+  await new Promise(r => setTimeout(r, fieldDelay));
+
+  await setSelectField("priority", "Normal");
+  await new Promise(r => setTimeout(r, 150));
+
+  await setSelectField("status", "New");
+}
+
+$("logoMark").addEventListener("click", (e) => {
+  if (e.detail === 3) {
+    setTimeout(() => {
+      runDemoFill();
+    }, 4000);
+  }
 });
 </script>
 </body>
