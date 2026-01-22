@@ -10,7 +10,7 @@ This application serves static HTML/JS demo pages. It provides a simple landing 
 
 - **Platform**: Coolify on DigitalOcean
 - **Method**: Docker container auto-deployed on push to main branch
-- **URL**: http://174.138.81.31:[port] (port assigned by Coolify)
+- **URL**: http://rgs4ssgs4skocsg0kkck0o0g.174.138.81.31.sslip.io
 
 ## Environment Variables
 
