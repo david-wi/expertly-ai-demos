@@ -1145,7 +1145,7 @@ async function setSelectField(fieldId, value, delay = 150) {
   await new Promise(r => setTimeout(r, delay));
   el.value = value;
   el.dispatchEvent(new Event("change", { bubbles: true }));
-  await new Promise(r => setTimeout(r, 200)); // extra pause after selection
+  await new Promise(r => setTimeout(r, 100)); // extra pause after selection
 }
 
 async function runDemoFill() {
