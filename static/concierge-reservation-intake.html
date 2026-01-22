@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Concierge Reservation Intake (Demo)</title>
+<title>Concierge Reservation Intake</title>
 <style>
 :root{
 --bg: #f5f6f8;
@@ -79,15 +79,11 @@ color: #5a4b41;
 background: rgba(123,106,94,0.10);
 }
 main{
-max-width: 1200px;
+max-width: 700px;
 margin: 0 auto;
 padding: 18px;
-display: grid;
-grid-template-columns: 1fr 1.05fr;
-gap: 18px;
 }
 @media (max-width: 980px){
-main{ grid-template-columns: 1fr; }
 .brand{ min-width: unset; }
 }
 .panel{
@@ -441,57 +437,21 @@ font-weight: 700;
 <div class="mark" aria-hidden="true"></div>
 <div class="titlewrap">
 <div class="title">Concierge Reservation Intake</div>
-<div class="subtitle">Demo UI for automation and testing. Not affiliated with any hotel or platform.</div>
+<div class="subtitle">Dining Reservations Management System</div>
 </div>
 </div>
 <div class="badges">
-<span class="badge strong">Training / Demo</span>
-<span class="badge">Stable Field IDs</span>
-<span class="badge">Includes "Submit Request" mode</span>
+<span class="badge strong">Production</span>
+<span class="badge">v2.4.1</span>
 </div>
 </div>
 </div>
 <main>
-<!-- Left: SuperPaste + JSON -->
-<section class="panel" aria-label="SuperPaste panel">
-<div class="panel-header">
-<div>
-<h2>SuperPaste</h2>
-<p>Paste the guest email here (optional). Your toolbar can also call <span class="mono">window.setReservationData({...})</span>.</p>
-</div>
-<div class="btnrow">
-<button class="small" id="btnLoadSample" type="button">Load sample</button>
-<button class="small danger" id="btnClear" type="button">Clear</button>
-</div>
-</div>
-<div class="panel-body">
-<label for="superpaste">Paste email text</label>
-<textarea id="superpaste" placeholder="Paste email contents here..."></textarea>
-<div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-<button class="primary" id="btnParse" type="button">Parse (basic)</button>
-<button id="btnCopyJson" type="button">Copy JSON</button>
-</div>
-<div class="hint">
-Automation hooks:
-<div class="mono" style="margin-top:8px;">
-<div>window.setReservationData(data)</div>
-<div>window.getReservationData()</div>
-<div>window.resetForm()</div>
-</div>
-</div>
-<pre id="jsonOut" aria-label="Current data as JSON">{}</pre>
-</div>
-</section>
-<!-- Right: Booking-style widget -->
 <section class="panel" aria-label="Reservation form panel">
 <div class="panel-header">
 <div>
 <h2>Reservation Form</h2>
-<p>Designed to match a typical booking flow: search date/party/time, guest info, add-ons, submit.</p>
-</div>
-<div class="tiny-toggle" title="Simulate no availability to show Submit Request flow">
-<input type="checkbox" id="toggleNoAvail" />
-<label for="toggleNoAvail" style="margin:0;">Simulate no availability</label>
+<p>Create a new dining reservation for the guest.</p>
 </div>
 </div>
 <div class="phone-wrap">
@@ -502,7 +462,7 @@ Automation hooks:
 </div>
 <div class="notice ok" id="statusBar">
 <div><strong id="statusTitle">Available</strong> <span id="statusMsg">Select details and submit.</span></div>
-<span class="pill" id="statusPill">Live demo</span>
+<span class="pill" id="statusPill">Real-time</span>
 </div>
 <div class="card">
 <div class="section-title">Reservation details</div>
@@ -692,7 +652,7 @@ bar.classList.remove("ok", "warn");
 bar.classList.add(kind);
 $("statusTitle").textContent = title;
 $("statusMsg").textContent = msg;
-$("statusPill").textContent = state.requestMode ? "Submit request" : "Live demo";
+$("statusPill").textContent = state.requestMode ? "Request mode" : "Real-time";
 $("reqModeHint").style.display = state.requestMode ? "block" : "none";
 $("btnSubmit").textContent = state.requestMode ? "Submit a request" : "Book reservation";
 }
@@ -737,7 +697,7 @@ state.email = $("email").value;
 state.phone = $("phone").value;
 state.internalRef = $("internalRef").value;
 state.policy = $("policy").checked;
-state.simulateNoAvail = $("toggleNoAvail").checked;
+state.simulateNoAvail = false;
 }
 
 function writeInputsFromState(){
@@ -753,7 +713,6 @@ $("email").value = state.email || "";
 $("phone").value = state.phone || "";
 $("internalRef").value = state.internalRef || "";
 $("policy").checked = !!state.policy;
-$("toggleNoAvail").checked = !!state.simulateNoAvail;
 $("topMeta").textContent = formatTopMeta();
 renderChips($("dietChips"), state.dietaryRestrictions, (i) => {
 state.dietaryRestrictions.splice(i, 1);
@@ -764,7 +723,6 @@ state.occasions.splice(i, 1);
 syncAll();
 });
 notesPreview();
-renderJSON();
 }
 
 function validateRequired(){
@@ -805,10 +763,6 @@ syncAvailability();
 writeInputsFromState();
 }
 
-function renderJSON(){
-const data = getReservationData();
-$("jsonOut").textContent = JSON.stringify(data, null, 2);
-}
 
 // ---------------------------
 // Modal system
@@ -979,7 +933,6 @@ policy: false,
 simulateNoAvail: false,
 requestMode: false
 });
-$("superpaste").value = "";
 writeInputsFromState();
 syncAll();
 }
@@ -996,7 +949,7 @@ $("date").value = todayISO();
 writeInputsFromState();
 syncAll();
 
-["outlet","date","partySize","time","area","preference","firstName","lastName","email","phone","internalRef","policy","toggleNoAvail"]
+["outlet","date","partySize","time","area","preference","firstName","lastName","email","phone","internalRef","policy"]
 .forEach(id => $(id).addEventListener("input", syncAll));
 
 $("btnAddDiet").addEventListener("click", () => {
@@ -1043,45 +996,6 @@ setStatus("ok", "Request submitted", "Demo only. Your integration can POST this 
 } else {
 setStatus("ok", "Booked", "Demo only. Your integration can trigger booking here.");
 }
-renderJSON();
-});
-
-$("btnParse").addEventListener("click", () => {
-const text = $("superpaste").value || "";
-const parsed = basicParseEmail(text);
-setReservationData(parsed);
-});
-
-$("btnCopyJson").addEventListener("click", async () => {
-const data = $("jsonOut").textContent;
-try{
-await navigator.clipboard.writeText(data);
-$("btnCopyJson").textContent = "Copied";
-setTimeout(() => $("btnCopyJson").textContent = "Copy JSON", 900);
-} catch { }
-});
-
-$("btnClear").addEventListener("click", resetForm);
-
-$("btnLoadSample").addEventListener("click", () => {
-const sample = {
-outlet: "Steakhouse",
-date: todayISO(),
-partySize: 4,
-time: "19:30",
-area: "Main Dining Room",
-preference: "Quiet table",
-firstName: "Jordan",
-lastName: "Reed",
-email: "jordan.reed@example.com",
-phone: "+1 242 555 0199",
-dietaryRestrictions: ["Gluten-free"],
-occasions: ["Anniversary"],
-notes: "Celebrating. If possible, a table away from high traffic areas.",
-internalRef: "Email: \"Dinner reservation request\"",
-policy: true
-};
-setReservationData(sample);
 });
 
 $("btnBack").addEventListener("click", () => {

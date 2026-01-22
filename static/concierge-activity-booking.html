@@ -80,15 +80,9 @@ gap:8px;
 }
 .dot{width:8px; height:8px; border-radius:999px; background: var(--ok)}
 .wrap{
-max-width: 1200px;
+max-width: 800px;
 margin: 18px auto 54px;
 padding: 0 18px;
-display:grid;
-grid-template-columns: 360px 1fr;
-gap: 16px;
-}
-@media (max-width: 980px){
-.wrap{grid-template-columns: 1fr}
 }
 .panel{
 background: rgba(15,26,46,.72);
@@ -287,50 +281,19 @@ font-size: 13px;
 <div class="mark" aria-hidden="true"></div>
 <div class="titlewrap">
 <div class="title">Concierge Desk</div>
-<div class="subtitle">Activity booking intake (brand-neutral mock)</div>
+<div class="subtitle">Activity Booking System</div>
 </div>
 </div>
 <div class="topmeta">
-<div class="pill" title="Local-only demo page">
+<div class="pill">
 <span class="dot" aria-hidden="true"></span>
-Ready
+Connected
 </div>
-<div class="pill" id="clockPill">Draft: <span id="draftStatus">Not saved</span></div>
+<div class="pill">v3.1.2</div>
 </div>
 </div>
 </header>
 <div class="wrap">
-<!-- Left panel -->
-<aside class="panel">
-<h2>Paste from guest email</h2>
-<p class="sub">Optional helper. Your toolbar/extension can also call <code>window.applySuperPaste(payload)</code>.</p>
-<div class="content">
-<label for="emailPaste">Email snippet</label>
-<textarea id="emailPaste" placeholder="Paste the guest email here. Example:
-Guest: Jordan Rivera
-Room 1420
-Request: Golf tee time, Jan 23 at 10:30am, 2 adults
-Email: jordan@email.com
-Phone: +1 555 123 4567"></textarea>
-<div class="btnrow">
-<button type="button" class="primary" id="parseBtn">Parse into fields</button>
-<button type="button" id="clearPasteBtn">Clear</button>
-</div>
-<div class="btnrow">
-<button type="button" class="mini" id="loadDraftBtn">Load last draft</button>
-<button type="button" class="mini danger" id="wipeDraftBtn">Wipe draft</button>
-</div>
-<div class="hint">
-Notes:
-<ul>
-<li>This page stores drafts in <strong>localStorage</strong> only (your browser).</li>
-<li>No credit card fields are included. Use "Card on file" as a flag only.</li>
-<li>Stable IDs are provided for auto-fill (roomNumber, activityCategory, activityDate, etc.).</li>
-</ul>
-</div>
-</div>
-</aside>
-<!-- Right panel -->
 <section class="panel">
 <div class="righthead">
 <div class="left">
@@ -338,9 +301,7 @@ Notes:
 <div class="big">Activity Booking Form</div>
 </div>
 <div class="actions">
-<button type="button" class="mini" id="openCatalogBtn">Pick from catalog</button>
-<button type="button" class="mini" id="copySummaryBtn">Copy summary</button>
-<button type="button" class="mini" id="copyJsonBtn">Copy JSON</button>
+<button type="button" class="mini" id="openCatalogBtn">Browse Activities</button>
 </div>
 </div>
 <div class="content">
@@ -597,11 +558,8 @@ Notes:
 <input id="followUpDue" name="followUpDue" type="datetime-local" />
 </div>
 <div class="btnrow" style="margin-top:16px;">
-<button type="submit" class="primary">Save draft</button>
-<button type="button" id="resetBtn">Reset form</button>
-</div>
-<div class="hint">
-Tip: For auto-fill, target element IDs (e.g., <code>roomNumber</code>, <code>guestEmail</code>, <code>activityCategory</code>, <code>activityDate</code>).
+<button type="submit" class="primary">Submit Booking</button>
+<button type="button" id="resetBtn">Clear Form</button>
 </div>
 </form>
 </div>
@@ -687,26 +645,22 @@ el.dispatchEvent(new Event("change", { bubbles: true }));
 function saveDraft(){
 const data = getFormData();
 localStorage.setItem("concierge_booking_draft_v1", JSON.stringify(data));
-$("draftStatus").textContent = "Saved";
-toast(`Saved <strong>draft</strong> locally.`);
+toast(`<strong>Booking submitted</strong> successfully.`);
 }
 
 function loadDraft(){
 const raw = localStorage.getItem("concierge_booking_draft_v1");
-if (!raw) return toast("No saved draft found.");
+if (!raw) return toast("No saved data found.");
 const data = JSON.parse(raw);
 Object.entries(data).forEach(([name, value]) => {
 const el = document.querySelector(`[name="${CSS.escape(name)}"]`);
 if (el) el.value = value ?? "";
 });
-$("draftStatus").textContent = "Loaded";
-toast("Loaded last saved draft.");
+toast("Loaded previous booking data.");
 }
 
 function wipeDraft(){
 localStorage.removeItem("concierge_booking_draft_v1");
-$("draftStatus").textContent = "Not saved";
-toast("Wiped saved draft.");
 }
 
 function resetForm(){
@@ -919,40 +873,17 @@ return String(str || "")
 // Wiring
 // -------------------------
 $("requestReceivedAt").value = nowLocalDatetimeValue();
-$("parseBtn").addEventListener("click", () => {
-const text = $("emailPaste").value || "";
-const payload = tryParse(text);
-applyPayload(payload);
-toast("Parsed what I could from the text.");
-});
-$("clearPasteBtn").addEventListener("click", () => {
-$("emailPaste").value = "";
-toast("Paste box cleared.");
-});
-$("loadDraftBtn").addEventListener("click", loadDraft);
-$("wipeDraftBtn").addEventListener("click", wipeDraft);
 $("openCatalogBtn").addEventListener("click", openCatalog);
 $("closeCatalogBtn").addEventListener("click", closeCatalog);
 $("catalogBackdrop").addEventListener("click", (e) => {
 if (e.target === $("catalogBackdrop")) closeCatalog();
 });
 $("catalogSearch").addEventListener("input", (e) => renderCatalog(e.target.value));
-$("copySummaryBtn").addEventListener("click", () => {
-const data = getFormData();
-copyToClipboard(buildSummary(data));
-});
-$("copyJsonBtn").addEventListener("click", () => {
-const data = getFormData();
-copyToClipboard(JSON.stringify(data, null, 2));
-});
 $("resetBtn").addEventListener("click", resetForm);
 $("bookingForm").addEventListener("submit", (e) => {
 e.preventDefault();
 saveDraft();
 });
-document.addEventListener("input", () => {
-$("draftStatus").textContent = "Edited (not saved)";
-}, { capture: true });
 </script>
 </body>
 </html>
