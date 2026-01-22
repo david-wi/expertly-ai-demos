@@ -1,4 +1,9 @@
 <!doctype html>
+<!--
+  HIDDEN DEMO TRIGGER:
+  Triple-click the logo (gradient square in top-left) to auto-fill the form
+  with sample data after a 2-second delay.
+-->
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -299,7 +304,7 @@ font-size: 13px;
 <header>
 <div class="topbar">
 <div class="brand">
-<div class="mark" aria-hidden="true"></div>
+<div class="mark" id="logoMark" aria-hidden="true"></div>
 <div class="titlewrap">
 <div class="title">Concierge Desk</div>
 <div class="subtitle">Activity Booking System</div>
@@ -904,6 +909,47 @@ $("resetBtn").addEventListener("click", resetForm);
 $("bookingForm").addEventListener("submit", (e) => {
 e.preventDefault();
 saveDraft();
+});
+
+// Hidden demo trigger: triple-click the logo
+$("logoMark").addEventListener("click", (e) => {
+if (e.detail === 3) {
+toast("Loading demo data...");
+setTimeout(() => {
+const demoData = {
+agentName: "Maria Santos",
+guestFirstName: "Jordan",
+guestLastName: "Rivera",
+guestEmail: "jordan.rivera@email.com",
+guestPhone: "+1 555 867 5309",
+preferredContact: "Email",
+roomNumber: "1420",
+reservationNumber: "BM2026-78432",
+arrivalDate: new Date().toISOString().split('T')[0],
+departureDate: new Date(Date.now() + 5*24*60*60*1000).toISOString().split('T')[0],
+vipFlag: "no",
+activityCategory: "Golf Tee Times",
+activityName: "Royal Blue Golf Course - Tee Time",
+providerName: "On-property",
+activityLocation: "Golf course, main clubhouse",
+activityDate: new Date(Date.now() + 2*24*60*60*1000).toISOString().split('T')[0],
+startTime: "10:30",
+timeFlex: "+/- 30 minutes",
+specialOccasion: "Anniversary trip",
+activityNotes: "Guest prefers morning tee time. Traveling with spouse. May need club rentals - please confirm availability.",
+adults: "2",
+children: "0",
+currency: "USD",
+estimatedCost: "350",
+depositRequired: "No",
+paymentMethod: "Charge to room",
+sendConfirmation: "yes",
+priority: "Normal",
+status: "New"
+};
+window.applySuperPaste(demoData);
+}, 2000);
+}
 });
 </script>
 </body>
