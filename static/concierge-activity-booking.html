@@ -436,17 +436,23 @@ Connected
 </div>
 <div>
 <label for="activityName">Activity</label>
-<input id="activityName" name="activityName" type="text" placeholder="e.g., ESPA Couples Massage, Royal Blue tee time" autocomplete="off" />
+<select id="activityName" name="activityName">
+<option value="">Select category first…</option>
+</select>
 </div>
 </div>
 <div class="grid2">
 <div>
 <label for="providerName">Provider</label>
-<input id="providerName" name="providerName" type="text" placeholder="Provider/vendor name (if applicable)" autocomplete="off" />
+<select id="providerName" name="providerName">
+<option value="">Auto-fills from activity</option>
+</select>
 </div>
 <div>
 <label for="activityLocation">Location</label>
-<input id="activityLocation" name="activityLocation" type="text" placeholder="On-property venue, meeting point, etc." autocomplete="off" />
+<select id="activityLocation" name="activityLocation">
+<option value="">Auto-fills from activity</option>
+</select>
 </div>
 </div>
 <div class="grid3">
@@ -456,11 +462,11 @@ Connected
 </div>
 <div>
 <label for="startTime">Start time</label>
-<input id="startTime" name="startTime" type="text" placeholder="HH:MM (24hr)" autocomplete="off" />
+<input id="startTime" name="startTime" type="time" />
 </div>
 <div>
 <label for="endTime">End time (or leave blank)</label>
-<input id="endTime" name="endTime" type="text" placeholder="HH:MM (24hr)" autocomplete="off" />
+<input id="endTime" name="endTime" type="time" />
 </div>
 </div>
 <div class="grid2">
@@ -1004,7 +1010,12 @@ div.innerHTML = `
 <div class="badge">${escapeHtml(it.provider || "—")}</div>
 `;
 div.addEventListener("click", () => {
+// Set category first and update dropdowns
 $("activityCategory").value = it.category;
+updateActivityDropdown(it.category);
+updateLocationDropdown(it.category);
+updateProviderDropdown();
+// Then set the values
 $("activityName").value = it.name;
 $("activityLocation").value = it.location || "";
 $("providerName").value = it.provider || "";
@@ -1024,6 +1035,77 @@ return String(str || "")
 .replaceAll("'","&#039;");
 }
 
+// -------------------------
+// Dynamic dropdown population
+// -------------------------
+function updateActivityDropdown(category) {
+  const select = $("activityName");
+  select.innerHTML = "";
+
+  if (!category || !ACTIVITY_CATALOG[category]) {
+    select.innerHTML = '<option value="">Select category first…</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value="">Select activity…</option>';
+  ACTIVITY_CATALOG[category].forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.name;
+    opt.textContent = item.name;
+    opt.dataset.location = item.location;
+    opt.dataset.provider = item.provider;
+    select.appendChild(opt);
+  });
+}
+
+function updateLocationDropdown(category) {
+  const select = $("activityLocation");
+  select.innerHTML = '<option value="">Select…</option>';
+
+  const locations = LOCATION_OPTIONS[category] || [];
+  locations.forEach(loc => {
+    const opt = document.createElement("option");
+    opt.value = loc;
+    opt.textContent = loc;
+    select.appendChild(opt);
+  });
+}
+
+function updateProviderDropdown() {
+  const select = $("providerName");
+  select.innerHTML = '<option value="">Select…</option>';
+  PROVIDER_OPTIONS.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    select.appendChild(opt);
+  });
+}
+
+// When category changes, update activity dropdown
+$("activityCategory").addEventListener("change", (e) => {
+  const cat = e.target.value;
+  updateActivityDropdown(cat);
+  updateLocationDropdown(cat);
+  updateProviderDropdown();
+  // Clear selections
+  $("activityLocation").value = "";
+  $("providerName").value = "";
+});
+
+// When activity is selected, auto-fill location and provider
+$("activityName").addEventListener("change", (e) => {
+  const selected = e.target.selectedOptions[0];
+  if (selected && selected.dataset.location) {
+    $("activityLocation").value = selected.dataset.location;
+  }
+  if (selected && selected.dataset.provider) {
+    $("providerName").value = selected.dataset.provider;
+  }
+});
+
+// Initialize provider dropdown
+updateProviderDropdown();
 
 // -------------------------
 // Wiring
@@ -1091,17 +1173,20 @@ async function runDemoFill() {
   await typeIntoField("reservationNumber", "BM2026-78432");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  // Activity section - set category first
-  await setSelectField("activityCategory", "Golf Tee Times");
+  // Activity section - set category first to populate dropdowns
+  $("activityCategory").value = "Golf Tee Times";
+  $("activityCategory").dispatchEvent(new Event("change", { bubbles: true }));
+  updateActivityDropdown("Golf Tee Times");
+  updateLocationDropdown("Golf Tee Times");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("activityName", "Royal Blue - 18 Holes");
+  await setSelectField("activityName", "Royal Blue - 18 Holes");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("activityLocation", "Royal Blue Golf Course");
+  await setSelectField("activityLocation", "Royal Blue Golf Course");
   await new Promise(r => setTimeout(r, fieldDelay));
 
-  await typeIntoField("providerName", "On-property");
+  await setSelectField("providerName", "On-property");
   await new Promise(r => setTimeout(r, fieldDelay));
 
   // Date parsed from email ("on the 24th")
@@ -1111,7 +1196,7 @@ async function runDemoFill() {
   $("activityDate").value = activityDate.toISOString().split('T')[0];
   await new Promise(r => setTimeout(r, 150));
 
-  await typeIntoField("startTime", "10:30");
+  $("startTime").value = "10:30";
   await new Promise(r => setTimeout(r, fieldDelay));
 
   await setSelectField("timeFlex", "+/- 30 minutes");
