@@ -4,31 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expertly AI Demos</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .demo-list {
+            list-style: none;
+        }
+        .demo-list li {
+            margin-bottom: 1rem;
+        }
+        .demo-list a {
+            display: block;
+            padding: 1rem 1.25rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #334155;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .demo-list a:hover {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+            transform: translateX(4px);
+        }
+        .demo-list .label {
+            font-weight: 600;
+            display: block;
+        }
+        .demo-list .desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Expertly AI Demos</h1>
-            <p class="subtitle">Interactive demonstrations and prototypes</p>
-        </header>
-
-        <main>
-            <section class="demos">
-                <h2>Available Demos</h2>
-                <div class="demo-grid">
-                    <div class="demo-card placeholder">
-                        <h3>Coming Soon</h3>
-                        <p>New demos will appear here as they are added.</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Expertly AI</p>
-        </footer>
+        <h1>Expertly AI Demos</h1>
+        <p class="subtitle">Hotel & Resort Concierge Simulations</p>
+        <ul class="demo-list">
+            <li>
+                <a href="concierge-reservation-intake.html">
+                    <span class="label">Reservation Intake</span>
+                    <span class="desc">PMS reservation form demo</span>
+                </a>
+            </li>
+            <li>
+                <a href="concierge-activity-booking.html">
+                    <span class="label">Activity Booking</span>
+                    <span class="desc">Resort activity scheduling demo</span>
+                </a>
+            </li>
+            <li>
+                <a href="toolbar-demo.html">
+                    <span class="label">Toolbar Demo</span>
+                    <span class="desc">UI toolbar component</span>
+                </a>
+            </li>
+        </ul>
     </div>
-    <script src="/js/common.js"></script>
 </body>
 </html>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OPERA Cloud Reservation Screen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#f4f6f8;
+      color:#1b1f24;
+    }
+    header{
+      background:#ffffff;
+      border-bottom:1px solid #d7dde6;
+      padding:10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .logo{
+      font-weight:bold;
+      font-size:18px;
+      color:#0a0a0a;
+    }
+    .toolbar{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn-icon{
+      width:32px;height:32px;
+      background:#ffffff;
+      border:1px solid #d7dde6;
+      border-radius:4px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#888;
+    }
+    main{
+      padding:14px;
+    }
+    h2{
+      margin-top:0;
+      font-size:16px;
+      font-weight:700;
+    }
+    section{
+      background:#ffffff;
+      border:1px solid #d7dde6;
+      border-radius:6px;
+      padding:12px 14px;
+      margin-bottom:14px;
+    }
+    .field-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .field{
+      flex:1 1 180px;
+      display:flex;
+      flex-direction:column;
+    }
+    label{
+      font-size:12px;
+      margin-bottom:4px;
+      color:#555;
+    }
+    input,select{
+      padding:8px;
+      border:1px solid #c9ced4;
+      border-radius:4px;
+      font-size:14px;
+      width:100%;
+    }
+    .section-note{
+      font-size:12px;
+      color:#777;
+      margin-top:6px;
+    }
+    .footer-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:10px;
+    }
+    .btn{
+      padding:8px 14px;
+      border:1px solid #bfc5cb;
+      background:#ffffff;
+      cursor:pointer;
+      font-size:14px;
+      border-radius:4px;
+    }
+    .btn.primary{
+      background:#0a718a;
+      border-color:#095c75;
+      color:#ffffff;
+    }
+    .caller-panel{
+      border:1px solid #c9ced4;
+      border-radius:4px;
+      padding:10px;
+      background:#fcfcfc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">OPERA Cloud – Reservation</div>
+    <div class="toolbar">
+      <!-- Unlabeled trigger icon for your extension superpaste -->
+      <button id="superpasteTrigger" class="btn-icon"></button>
+      <button class="btn primary" id="confirmBtn">Confirm</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Caller information -->
+    <section class="caller-panel" id="callerPanel">
+      <h2>Caller Information</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>First Name</label>
+          <input id="caller_first_name" />
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input id="caller_last_name" />
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input id="caller_phone" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="caller_email" type="email" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Guest profile -->
+    <section>
+      <h2>Guest Profile</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>Last Name</label>
+          <input id="guest_last_name" />
+        </div>
+        <div class="field">
+          <label>First Name</label>
+          <input id="guest_first_name" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="guest_email" type="email" />
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input id="guest_phone" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Stay details -->
+    <section>
+      <h2>Stay Details</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>Arrival Date</label>
+          <input id="arrival_date" type="date" />
+        </div>
+        <div class="field">
+          <label>Nights</label>
+          <input id="nights" type="number" min="1" />
+        </div>
+        <div class="field">
+          <label>Departure Date</label>
+          <input id="departure_date" type="date" />
+        </div>
+        <div class="field">
+          <label>Rooms</label>
+          <input id="rooms" type="number" min="1" />
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-top:10px;">
+        <div class="field">
+          <label>Adults</label>
+          <input id="adults" type="number" min="1" />
+        </div>
+        <div class="field">
+          <label>Children</label>
+          <input id="children" type="number" min="0" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Room & rate -->
+    <section>
+      <h2>Room & Rate</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>Room Type</label>
+          <select id="room_type">
+            <option></option>
+            <option>Standard</option>
+            <option>Deluxe</option>
+            <option>Suite</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Rate Code</label>
+          <select id="rate_code">
+            <option></option>
+            <option>BAR</option>
+            <option>Corporate</option>
+            <option>Member</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Rate Amount</label>
+          <input id="rate_amount" type="number" step="0.01" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Codes -->
+    <section>
+      <h2>Codes</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>Market Code</label>
+          <select id="market_code">
+            <option></option>
+            <option>Leisure</option>
+            <option>Corporate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Source Code</label>
+          <select id="source_code">
+            <option></option>
+            <option>Web</option>
+            <option>Email</option>
+            <option>Walk-In</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Origin</label>
+          <select id="origin_code">
+            <option></option>
+            <option>Direct</option>
+            <option>OTA</option>
+            <option>GDS</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment -->
+    <section>
+      <h2>Payment</h2>
+      <div class="field-group">
+        <div class="field">
+          <label>Payment Method</label>
+          <select id="payment_method">
+            <option></option>
+            <option>Credit Card</option>
+            <option>Cash</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Card Last 4</label>
+          <input id="cc_last4" maxlength="4" />
+        </div>
+        <div class="field">
+          <label>Card Expiry</label>
+          <input id="cc_expiry" placeholder="MM/YY" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function setField(id, value){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.value = value || "";
+      el.dispatchEvent(new Event("change"));
+    }
+
+    function flatten(obj, prefix){
+      const out = {};
+      const p = prefix ? prefix + "." : "";
+      Object.keys(obj || {}).forEach(k => {
+        const v = obj[k];
+        if(v && typeof v === "object"){
+          Object.assign(out, flatten(v, p + k));
+        } else {
+          out[p + k] = v;
+        }
+      });
+      return out;
+    }
+
+    function fillReservation(payload){
+      const flat = flatten(payload, "");
+      Object.entries(flat).forEach(([k,v]) => {
+        setField(k, v);
+      });
+    }
+
+    window.expertlyFillReservation = fillReservation;
+
+    document.getElementById("superpasteTrigger").addEventListener("click", () => {
+      // extension can hook into this element
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concierge Activity Booking</title>
+<style>
+:root{
+--bg:#0b1220;
+--panel:#0f1a2e;
+--card:#101f36;
+--muted:#93a4c7;
+--text:#e8eefc;
+--line:rgba(255,255,255,.10);
+--accent:#5eead4;
+--accent2:#60a5fa;
+--danger:#fb7185;
+--ok:#34d399;
+--warn:#fbbf24;
+--shadow: 0 14px 40px rgba(0,0,0,.45);
+--radius: 14px;
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+background: radial-gradient(1200px 800px at 15% 10%, rgba(96,165,250,.18), transparent 55%),
+radial-gradient(1200px 800px at 85% 10%, rgba(94,234,212,.14), transparent 55%),
+var(--bg);
+color:var(--text);
+}
+header{
+position: sticky;
+top: 0;
+z-index: 5;
+backdrop-filter: blur(10px);
+background: rgba(11,18,32,.72);
+border-bottom: 1px solid var(--line);
+}
+.topbar{
+max-width: 1200px;
+margin: 0 auto;
+padding: 14px 18px;
+display:flex;
+align-items:center;
+gap:14px;
+justify-content:space-between;
+}
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+.mark{
+width: 34px;
+height: 34px;
+border-radius: 10px;
+background: linear-gradient(135deg, rgba(96,165,250,.95), rgba(94,234,212,.85));
+box-shadow: 0 10px 30px rgba(96,165,250,.18);
+}
+.titlewrap{line-height:1.1}
+.title{font-weight:750; letter-spacing:.2px}
+.subtitle{font-size:12px; color:var(--muted); margin-top:3px}
+.topmeta{
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+}
+.pill{
+border: 1px solid var(--line);
+background: rgba(255,255,255,.04);
+padding: 8px 10px;
+border-radius: 999px;
+font-size: 12px;
+color: var(--muted);
+display:flex;
+align-items:center;
+gap:8px;
+}
+.dot{width:8px; height:8px; border-radius:999px; background: var(--ok)}
+.wrap{
+max-width: 1200px;
+margin: 18px auto 54px;
+padding: 0 18px;
+display:grid;
+grid-template-columns: 360px 1fr;
+gap: 16px;
+}
+@media (max-width: 980px){
+.wrap{grid-template-columns: 1fr}
+}
+.panel{
+background: rgba(15,26,46,.72);
+border: 1px solid var(--line);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+overflow:hidden;
+}
+.panel h2{
+margin:0;
+padding: 14px 14px 10px;
+font-size: 14px;
+letter-spacing:.2px;
+}
+.panel .sub{
+margin:0;
+padding: 0 14px 14px;
+font-size: 12px;
+color: var(--muted);
+border-bottom:1px solid var(--line);
+}
+.content{padding: 14px}
+label{
+display:block;
+font-size: 12px;
+color: var(--muted);
+margin: 10px 0 6px;
+}
+input, select, textarea{
+width:100%;
+padding: 10px 11px;
+border-radius: 12px;
+border: 1px solid var(--line);
+background: rgba(255,255,255,.04);
+color: var(--text);
+outline: none;
+}
+textarea{min-height: 160px; resize: vertical}
+input::placeholder, textarea::placeholder{color: rgba(147,164,199,.7)}
+.grid2{display:grid; grid-template-columns: 1fr 1fr; gap: 10px}
+.grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px}
+@media (max-width: 560px){
+.grid2, .grid3{grid-template-columns: 1fr}
+}
+.btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px}
+button{
+border:1px solid var(--line);
+background: rgba(255,255,255,.06);
+color: var(--text);
+padding: 10px 12px;
+border-radius: 12px;
+cursor:pointer;
+font-weight: 650;
+letter-spacing: .2px;
+}
+button.primary{
+background: linear-gradient(135deg, rgba(96,165,250,.92), rgba(94,234,212,.82));
+border-color: transparent;
+color: #051019;
+}
+button.danger{
+background: rgba(251,113,133,.10);
+border-color: rgba(251,113,133,.35);
+color: #ffd1d9;
+}
+button:active{transform: translateY(1px)}
+.hint{
+margin-top: 10px;
+font-size: 12px;
+color: var(--muted);
+line-height:1.35;
+}
+form .section{
+border-top: 1px solid var(--line);
+padding-top: 12px;
+margin-top: 12px;
+}
+.sectiontitle{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin-bottom: 6px;
+}
+.sectiontitle h3{
+margin: 0;
+font-size: 13px;
+letter-spacing:.2px;
+}
+.righthead{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap: 10px;
+padding: 14px 14px 10px;
+border-bottom: 1px solid var(--line);
+background: rgba(16,31,54,.55);
+}
+.righthead .left{
+display:flex;
+flex-direction:column;
+gap:4px;
+}
+.righthead .left .kicker{font-size:12px; color: var(--muted)}
+.righthead .left .big{font-size: 16px; font-weight: 780}
+.righthead .actions{display:flex; gap:10px; flex-wrap:wrap}
+.mini{
+font-size: 12px;
+padding: 9px 11px;
+border-radius: 12px;
+}
+/* Modal */
+.modalbackdrop{
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,.55);
+display:none;
+align-items:center;
+justify-content:center;
+padding: 18px;
+z-index: 50;
+}
+.modal{
+width: min(760px, 100%);
+background: rgba(15,26,46,.96);
+border: 1px solid var(--line);
+border-radius: 16px;
+box-shadow: var(--shadow);
+overflow:hidden;
+}
+.modal header{
+position: static;
+border-bottom: 1px solid var(--line);
+background: rgba(255,255,255,.03);
+padding: 12px 14px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+}
+.modal header .mtitle{font-weight: 780}
+.modal .mcontent{padding: 14px}
+.list{
+margin-top: 10px;
+border: 1px solid var(--line);
+border-radius: 14px;
+overflow:hidden;
+}
+.row{
+display:flex;
+justify-content:space-between;
+gap:12px;
+padding: 12px 12px;
+border-top: 1px solid var(--line);
+background: rgba(255,255,255,.02);
+cursor:pointer;
+}
+.row:first-child{border-top:none}
+.row:hover{background: rgba(96,165,250,.10)}
+.rleft{display:flex; flex-direction:column; gap:3px}
+.rname{font-weight: 750}
+.rmeta{font-size: 12px; color: var(--muted)}
+.badge{
+font-size: 11px;
+padding: 6px 8px;
+border-radius: 999px;
+border: 1px solid var(--line);
+color: var(--muted);
+height: fit-content;
+white-space: nowrap;
+}
+/* Toast */
+.toast{
+position: fixed;
+right: 16px;
+bottom: 16px;
+padding: 10px 12px;
+border-radius: 12px;
+border: 1px solid var(--line);
+background: rgba(16,31,54,.90);
+box-shadow: var(--shadow);
+color: var(--text);
+display:none;
+z-index: 60;
+max-width: min(420px, calc(100vw - 32px));
+font-size: 13px;
+}
+.toast strong{color: var(--accent)}
+.smallmuted{font-size: 11px; color: var(--muted); margin-top: 6px}
+</style>
+</head>
+<body>
+<header>
+<div class="topbar">
+<div class="brand">
+<div class="mark" aria-hidden="true"></div>
+<div class="titlewrap">
+<div class="title">Concierge Desk</div>
+<div class="subtitle">Activity booking intake (brand-neutral mock)</div>
+</div>
+</div>
+<div class="topmeta">
+<div class="pill" title="Local-only demo page">
+<span class="dot" aria-hidden="true"></span>
+Ready
+</div>
+<div class="pill" id="clockPill">Draft: <span id="draftStatus">Not saved</span></div>
+</div>
+</div>
+</header>
+<div class="wrap">
+<!-- Left panel -->
+<aside class="panel">
+<h2>Paste from guest email</h2>
+<p class="sub">Optional helper. Your toolbar/extension can also call <code>window.applySuperPaste(payload)</code>.</p>
+<div class="content">
+<label for="emailPaste">Email snippet</label>
+<textarea id="emailPaste" placeholder="Paste the guest email here. Example:
+Guest: Jordan Rivera
+Room 1420
+Request: Golf tee time, Jan 23 at 10:30am, 2 adults
+Email: jordan@email.com
+Phone: +1 555 123 4567"></textarea>
+<div class="btnrow">
+<button type="button" class="primary" id="parseBtn">Parse into fields</button>
+<button type="button" id="clearPasteBtn">Clear</button>
+</div>
+<div class="btnrow">
+<button type="button" class="mini" id="loadDraftBtn">Load last draft</button>
+<button type="button" class="mini danger" id="wipeDraftBtn">Wipe draft</button>
+</div>
+<div class="hint">
+Notes:
+<ul>
+<li>This page stores drafts in <strong>localStorage</strong> only (your browser).</li>
+<li>No credit card fields are included. Use "Card on file" as a flag only.</li>
+<li>Stable IDs are provided for auto-fill (roomNumber, activityCategory, activityDate, etc.).</li>
+</ul>
+</div>
+</div>
+</aside>
+<!-- Right panel -->
+<section class="panel">
+<div class="righthead">
+<div class="left">
+<div class="kicker">Create a booking request</div>
+<div class="big">Activity Booking Form</div>
+</div>
+<div class="actions">
+<button type="button" class="mini" id="openCatalogBtn">Pick from catalog</button>
+<button type="button" class="mini" id="copySummaryBtn">Copy summary</button>
+<button type="button" class="mini" id="copyJsonBtn">Copy JSON</button>
+</div>
+</div>
+<div class="content">
+<form id="bookingForm" autocomplete="on">
+<div class="grid2">
+<div>
+<label for="agentName">Agent name</label>
+<input id="agentName" name="agentName" placeholder="Concierge / Agent" />
+</div>
+<div>
+<label for="requestReceivedAt">Request received</label>
+<input id="requestReceivedAt" name="requestReceivedAt" type="datetime-local" />
+</div>
+</div>
+<div class="section">
+<div class="sectiontitle">
+<h3>Guest and stay</h3>
+</div>
+<div class="grid2">
+<div>
+<label for="guestFirstName">First name</label>
+<input id="guestFirstName" name="guestFirstName" placeholder="First name" />
+</div>
+<div>
+<label for="guestLastName">Last name</label>
+<input id="guestLastName" name="guestLastName" placeholder="Last name" />
+</div>
+</div>
+<div class="grid2">
+<div>
+<label for="guestEmail">Email</label>
+<input id="guestEmail" name="guestEmail" type="email" placeholder="guest@email.com" />
+</div>
+<div>
+<label for="guestPhone">Phone</label>
+<input id="guestPhone" name="guestPhone" placeholder="+1 555 123 4567" />
+</div>
+</div>
+<div class="grid3">
+<div>
+<label for="preferredContact">Preferred contact</label>
+<select id="preferredContact" name="preferredContact">
+<option value="">Select…</option>
+<option>Email</option>
+<option>Phone</option>
+<option>Text / Messaging</option>
+<option>In person</option>
+</select>
+</div>
+<div>
+<label for="roomNumber">Room number</label>
+<input id="roomNumber" name="roomNumber" placeholder="e.g., 1420" />
+</div>
+<div>
+<label for="reservationNumber">Reservation / confirmation #</label>
+<input id="reservationNumber" name="reservationNumber" placeholder="e.g., ABC12345" />
+</div>
+</div>
+<div class="grid3">
+<div>
+<label for="arrivalDate">Arrival</label>
+<input id="arrivalDate" name="arrivalDate" type="date" />
+</div>
+<div>
+<label for="departureDate">Departure</label>
+<input id="departureDate" name="departureDate" type="date" />
+</div>
+<div>
+<label for="vipFlag">VIP / Special handling</label>
+<select id="vipFlag" name="vipFlag">
+<option value="">Select…</option>
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+</div>
+</div>
+<label for="accessibilityNeeds">Accessibility or mobility notes</label>
+<input id="accessibilityNeeds" name="accessibilityNeeds" placeholder="Wheelchair access, hearing assistance, etc." />
+</div>
+<div class="section">
+<div class="sectiontitle">
+<h3>Activity details</h3>
+</div>
+<div class="grid2">
+<div>
+<label for="activityCategory">Category</label>
+<select id="activityCategory" name="activityCategory">
+<option value="">Select…</option>
+<option>Kids Club</option>
+<option>Wildlife Experiences</option>
+<option>Art Workshops & Tours</option>
+<option>Tennis & Pickleball</option>
+<option>Golf Tee Times</option>
+<option>Mini Golf</option>
+<option>Spa</option>
+<option>Cabanas / Daybeds / Loungers</option>
+<option>Interactive Cooking Experience</option>
+<option>Treasure Hunt / App Activity</option>
+<option>Off-Property Excursion</option>
+<option>Mascot / Character Booking</option>
+<option>Airport Transfer</option>
+<option>Mobility Equipment</option>
+<option>Semi-Private Air Travel</option>
+<option>Other</option>
+</select>
+</div>
+<div>
+<label for="activityName">Activity name</label>
+<input id="activityName" name="activityName" placeholder="e.g., Royal Blue tee time / Spa treatment / Cabana" />
+</div>
+</div>
+<div class="grid2">
+<div>
+<label for="providerName">Provider / vendor (optional)</label>
+<input id="providerName" name="providerName" placeholder="If applicable" />
+</div>
+<div>
+<label for="activityLocation">Location (optional)</label>
+<input id="activityLocation" name="activityLocation" placeholder="On-property venue, meeting point, etc." />
+</div>
+</div>
+<div class="grid3">
+<div>
+<label for="activityDate">Date</label>
+<input id="activityDate" name="activityDate" type="date" />
+</div>
+<div>
+<label for="startTime">Start time</label>
+<input id="startTime" name="startTime" type="time" />
+</div>
+<div>
+<label for="endTime">End time (or leave blank)</label>
+<input id="endTime" name="endTime" type="time" />
+</div>
+</div>
+<div class="grid2">
+<div>
+<label for="timeFlex">Time flexibility</label>
+<select id="timeFlex" name="timeFlex">
+<option value="">Select…</option>
+<option>Fixed time only</option>
+<option>+/- 30 minutes</option>
+<option>+/- 1 hour</option>
+<option>Any time that day</option>
+</select>
+</div>
+<div>
+<label for="specialOccasion">Special occasion (optional)</label>
+<input id="specialOccasion" name="specialOccasion" placeholder="Birthday, anniversary, etc." />
+</div>
+</div>
+<label for="activityNotes">Guest notes / preferences</label>
+<textarea id="activityNotes" name="activityNotes" placeholder="Preferences, restrictions, pickup details, dress code concerns, etc."></textarea>
+</div>
+<div class="section">
+<div class="sectiontitle">
+<h3>Party</h3>
+</div>
+<div class="grid3">
+<div>
+<label for="adults">Adults</label>
+<input id="adults" name="adults" type="number" min="0" placeholder="0" />
+</div>
+<div>
+<label for="children">Children</label>
+<input id="children" name="children" type="number" min="0" placeholder="0" />
+</div>
+<div>
+<label for="childrenAges">Children ages</label>
+<input id="childrenAges" name="childrenAges" placeholder="e.g., 4, 7, 12" />
+</div>
+</div>
+</div>
+<div class="section">
+<div class="sectiontitle">
+<h3>Payment and confirmations</h3>
+</div>
+<div class="grid3">
+<div>
+<label for="currency">Currency</label>
+<select id="currency" name="currency">
+<option value="">Select…</option>
+<option>USD</option>
+<option>BSD</option>
+</select>
+</div>
+<div>
+<label for="estimatedCost">Estimated cost (optional)</label>
+<input id="estimatedCost" name="estimatedCost" placeholder="e.g., 250" inputmode="decimal" />
+</div>
+<div>
+<label for="depositRequired">Deposit required</label>
+<select id="depositRequired" name="depositRequired">
+<option value="">Select…</option>
+<option>No</option>
+<option>Yes</option>
+<option>Unknown</option>
+</select>
+</div>
+</div>
+<div class="grid2">
+<div>
+<label for="paymentMethod">Payment method (no card numbers)</label>
+<select id="paymentMethod" name="paymentMethod">
+<option value="">Select…</option>
+<option>Charge to room</option>
+<option>Pay onsite</option>
+<option>Card on file</option>
+<option>Third-party payment</option>
+</select>
+</div>
+<div>
+<label for="sendConfirmation">Send confirmation to guest</label>
+<select id="sendConfirmation" name="sendConfirmation">
+<option value="">Select…</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select>
+</div>
+</div>
+<label for="cancellationNotes">Cancellation / policy notes (optional)</label>
+<input id="cancellationNotes" name="cancellationNotes" placeholder="Free text, link, or internal reminder" />
+</div>
+<div class="section">
+<div class="sectiontitle">
+<h3>Internal tracking</h3>
+</div>
+<div class="grid3">
+<div>
+<label for="priority">Priority</label>
+<select id="priority" name="priority">
+<option value="">Select…</option>
+<option>Normal</option>
+<option>High</option>
+<option>Urgent</option>
+</select>
+</div>
+<div>
+<label for="status">Status</label>
+<select id="status" name="status">
+<option>New</option>
+<option>Pending</option>
+<option>Booked</option>
+<option>Cancelled</option>
+<option>Declined</option>
+</select>
+</div>
+<div>
+<label for="internalRef">Internal ref / ticket #</label>
+<input id="internalRef" name="internalRef" placeholder="Optional reference" />
+</div>
+</div>
+<label for="followUpDue">Follow-up due (optional)</label>
+<input id="followUpDue" name="followUpDue" type="datetime-local" />
+</div>
+<div class="btnrow" style="margin-top:16px;">
+<button type="submit" class="primary">Save draft</button>
+<button type="button" id="resetBtn">Reset form</button>
+</div>
+<div class="hint">
+Tip: For auto-fill, target element IDs (e.g., <code>roomNumber</code>, <code>guestEmail</code>, <code>activityCategory</code>, <code>activityDate</code>).
+</div>
+</form>
+</div>
+</section>
+</div>
+<!-- Modal: Activity catalog -->
+<div class="modalbackdrop" id="catalogBackdrop" role="dialog" aria-modal="true" aria-labelledby="catalogTitle">
+<div class="modal">
+<header>
+<div class="mtitle" id="catalogTitle">Activity catalog</div>
+<button type="button" id="closeCatalogBtn">Close</button>
+</header>
+<div class="mcontent">
+<label for="catalogSearch">Search</label>
+<input id="catalogSearch" placeholder="Type to filter (golf, spa, kids, cabana...)" />
+<div class="list" id="catalogList"></div>
+<div class="smallmuted">
+Selecting an item fills Category, Activity name, Location, and Provider (when available).
+</div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// -------------------------
+// Catalog entries (public-facing categories aligned to Baha Mar activities list)
+// -------------------------
+const ACTIVITY_CATALOG = [
+{ category: "Kids Club", name: "Kids Club session", location: "Kids Club", provider: "On-property" },
+{ category: "Wildlife Experiences", name: "Wildlife encounter", location: "Sanctuary / Aviary", provider: "On-property" },
+{ category: "Art Workshops & Tours", name: "Art workshop", location: "Art studio / gallery", provider: "On-property" },
+{ category: "Tennis & Pickleball", name: "Court rental or lesson", location: "Tennis Center", provider: "On-property" },
+{ category: "Golf Tee Times", name: "Golf tee time", location: "Golf course", provider: "On-property" },
+{ category: "Mini Golf", name: "Mini golf", location: "Mini golf course", provider: "On-property" },
+{ category: "Spa", name: "Spa treatment", location: "Spa", provider: "On-property" },
+{ category: "Cabanas / Daybeds / Loungers", name: "Cabana reservation", location: "Pool / beach", provider: "On-property" },
+{ category: "Interactive Cooking Experience", name: "Cooking experience", location: "Culinary venue", provider: "On-property" },
+{ category: "Off-Property Excursion", name: "Day trip excursion", location: "Off-property", provider: "Third-party" },
+{ category: "Airport Transfer", name: "Airport transfer", location: "Arrival / Departure", provider: "Car service" },
+{ category: "Mobility Equipment", name: "Wheelchair / scooter rental", location: "Delivery to room", provider: "Mobility vendor" },
+{ category: "Semi-Private Air Travel", name: "Semi-private flight inquiry", location: "Airport", provider: "Air operator" },
+];
+
+const $ = (id) => document.getElementById(id);
+
+function nowLocalDatetimeValue(){
+const d = new Date();
+const pad = (n) => String(n).padStart(2,'0');
+const yyyy = d.getFullYear();
+const mm = pad(d.getMonth()+1);
+const dd = pad(d.getDate());
+const hh = pad(d.getHours());
+const mi = pad(d.getMinutes());
+return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+}
+
+function toast(message){
+const t = $("toast");
+t.innerHTML = message;
+t.style.display = "block";
+clearTimeout(toast._timer);
+toast._timer = setTimeout(() => { t.style.display = "none"; }, 2600);
+}
+
+function getFormData(){
+const form = $("bookingForm");
+const data = {};
+[...form.elements].forEach(el => {
+if (!el.name) return;
+data[el.name] = el.value ?? "";
+});
+return data;
+}
+
+function setField(id, value){
+const el = $(id);
+if (!el) return;
+el.value = value ?? "";
+el.dispatchEvent(new Event("input", { bubbles: true }));
+el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function saveDraft(){
+const data = getFormData();
+localStorage.setItem("concierge_booking_draft_v1", JSON.stringify(data));
+$("draftStatus").textContent = "Saved";
+toast(`Saved <strong>draft</strong> locally.`);
+}
+
+function loadDraft(){
+const raw = localStorage.getItem("concierge_booking_draft_v1");
+if (!raw) return toast("No saved draft found.");
+const data = JSON.parse(raw);
+Object.entries(data).forEach(([name, value]) => {
+const el = document.querySelector(`[name="${CSS.escape(name)}"]`);
+if (el) el.value = value ?? "";
+});
+$("draftStatus").textContent = "Loaded";
+toast("Loaded last saved draft.");
+}
+
+function wipeDraft(){
+localStorage.removeItem("concierge_booking_draft_v1");
+$("draftStatus").textContent = "Not saved";
+toast("Wiped saved draft.");
+}
+
+function resetForm(){
+$("bookingForm").reset();
+setField("requestReceivedAt", nowLocalDatetimeValue());
+toast("Form reset.");
+}
+
+function copyToClipboard(text){
+navigator.clipboard.writeText(text).then(
+() => toast("Copied to clipboard."),
+() => toast("Clipboard blocked by browser settings.")
+);
+}
+
+function buildSummary(data){
+const lines = [];
+lines.push(`Guest: ${data.guestFirstName || ""} ${data.guestLastName || ""}`.trim());
+if (data.roomNumber) lines.push(`Room: ${data.roomNumber}`);
+if (data.reservationNumber) lines.push(`Conf#: ${data.reservationNumber}`);
+if (data.guestEmail) lines.push(`Email: ${data.guestEmail}`);
+if (data.guestPhone) lines.push(`Phone: ${data.guestPhone}`);
+lines.push("");
+lines.push(`Category: ${data.activityCategory || ""}`);
+lines.push(`Activity: ${data.activityName || ""}`);
+if (data.activityLocation) lines.push(`Location: ${data.activityLocation}`);
+if (data.providerName) lines.push(`Provider: ${data.providerName}`);
+if (data.activityDate) lines.push(`Date: ${data.activityDate}`);
+if (data.startTime) lines.push(`Start: ${data.startTime}`);
+if (data.endTime) lines.push(`End: ${data.endTime}`);
+if (data.timeFlex) lines.push(`Flex: ${data.timeFlex}`);
+lines.push("");
+if (data.adults || data.children) lines.push(`Party: ${data.adults || 0} adults, ${data.children || 0} children`);
+if (data.childrenAges) lines.push(`Children ages: ${data.childrenAges}`);
+lines.push("");
+if (data.paymentMethod) lines.push(`Payment: ${data.paymentMethod}`);
+if (data.estimatedCost) lines.push(`Est. cost: ${data.currency || ""} ${data.estimatedCost}`.trim());
+if (data.depositRequired) lines.push(`Deposit: ${data.depositRequired}`);
+if (data.sendConfirmation) lines.push(`Send confirmation: ${data.sendConfirmation}`);
+lines.push("");
+if (data.activityNotes) lines.push(`Notes:\n${data.activityNotes}`);
+return lines.join("\n").trim();
+}
+
+// -------------------------
+// Lightweight "parse from email" helper
+// -------------------------
+function tryParse(text){
+const out = {};
+const emailMatch = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+if (emailMatch) out.guestEmail = emailMatch[0];
+const phoneMatch = text.match(/(\+?\d[\d\s().-]{7,}\d)/);
+if (phoneMatch) out.guestPhone = phoneMatch[1].trim();
+const roomMatch = text.match(/\b(room|rm)\s*#?\s*([A-Za-z]?\d{2,5})\b/i);
+if (roomMatch) out.roomNumber = roomMatch[2];
+const confMatch = text.match(/\b(confirmation|conf|reservation)\s*(#|no\.?)?\s*([A-Za-z0-9-]{5,})\b/i);
+if (confMatch) out.reservationNumber = confMatch[3];
+const nameMatch = text.match(/\b(guest|name)\s*:\s*([A-Za-z''-]+)\s+([A-Za-z''-]+)\b/i);
+if (nameMatch){
+out.guestFirstName = nameMatch[2].replace(/[']/g,"'");
+out.guestLastName = nameMatch[3].replace(/[']/g,"'");
+}
+const paxMatch = text.match(/\b(party|guests|pax)\s*[:=]?\s*(\d{1,2})\b/i);
+if (paxMatch) out.adults = paxMatch[2];
+const adultsMatch = text.match(/\b(\d{1,2})\s*adults?\b/i);
+if (adultsMatch) out.adults = adultsMatch[1];
+const childMatch = text.match(/\b(\d{1,2})\s*child(ren)?\b/i);
+if (childMatch) out.children = childMatch[1];
+const isoDate = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+if (isoDate) out.activityDate = isoDate[1];
+const timeMatch = text.match(/\b(\d{1,2})(:\d{2})?\s*([ap])\.?\s*m?\b/i);
+if (timeMatch){
+let hh = parseInt(timeMatch[1], 10);
+const mm = timeMatch[2] ? timeMatch[2].slice(1) : "00";
+const ap = timeMatch[3].toLowerCase();
+if (ap === "p" && hh < 12) hh += 12;
+if (ap === "a" && hh === 12) hh = 0;
+out.startTime = String(hh).padStart(2,'0') + ":" + mm;
+}
+const lc = text.toLowerCase();
+if (lc.includes("golf")) out.activityCategory = "Golf Tee Times";
+else if (lc.includes("spa") || lc.includes("massage") || lc.includes("facial")) out.activityCategory = "Spa";
+else if (lc.includes("cabana") || lc.includes("daybed")) out.activityCategory = "Cabanas / Daybeds / Loungers";
+else if (lc.includes("tennis") || lc.includes("pickleball")) out.activityCategory = "Tennis & Pickleball";
+else if (lc.includes("kids club") || lc.includes("explorers")) out.activityCategory = "Kids Club";
+else if (lc.includes("excursion") || lc.includes("catamaran") || lc.includes("tour")) out.activityCategory = "Off-Property Excursion";
+else if (lc.includes("transfer") || lc.includes("airport")) out.activityCategory = "Airport Transfer";
+else if (lc.includes("wheelchair") || lc.includes("scooter")) out.activityCategory = "Mobility Equipment";
+const reqLine = text.split("\n").find(l => /^\s*(request|activity)\s*:/i.test(l));
+if (reqLine){
+out.activityName = reqLine.split(":").slice(1).join(":").trim().slice(0, 120);
+}
+return out;
+}
+
+function applyPayload(payload){
+const mapping = {
+agentName: "agentName",
+requestReceivedAt: "requestReceivedAt",
+guestFirstName: "guestFirstName",
+guestLastName: "guestLastName",
+guestEmail: "guestEmail",
+guestPhone: "guestPhone",
+preferredContact: "preferredContact",
+roomNumber: "roomNumber",
+reservationNumber: "reservationNumber",
+arrivalDate: "arrivalDate",
+departureDate: "departureDate",
+vipFlag: "vipFlag",
+accessibilityNeeds: "accessibilityNeeds",
+activityCategory: "activityCategory",
+activityName: "activityName",
+providerName: "providerName",
+activityLocation: "activityLocation",
+activityDate: "activityDate",
+startTime: "startTime",
+endTime: "endTime",
+timeFlex: "timeFlex",
+specialOccasion: "specialOccasion",
+activityNotes: "activityNotes",
+adults: "adults",
+children: "children",
+childrenAges: "childrenAges",
+currency: "currency",
+estimatedCost: "estimatedCost",
+depositRequired: "depositRequired",
+paymentMethod: "paymentMethod",
+sendConfirmation: "sendConfirmation",
+cancellationNotes: "cancellationNotes",
+priority: "priority",
+status: "status",
+internalRef: "internalRef",
+followUpDue: "followUpDue",
+};
+Object.entries(payload || {}).forEach(([k, v]) => {
+const id = mapping[k];
+if (id) setField(id, v);
+});
+}
+
+// Expose a stable hook for your toolbar/extension
+window.applySuperPaste = function(payload){
+applyPayload(payload);
+toast("Applied payload via <strong>applySuperPaste</strong>.");
+};
+
+// -------------------------
+// Modal helpers
+// -------------------------
+function openCatalog(){
+$("catalogBackdrop").style.display = "flex";
+$("catalogSearch").value = "";
+renderCatalog("");
+$("catalogSearch").focus();
+}
+
+function closeCatalog(){
+$("catalogBackdrop").style.display = "none";
+}
+
+function renderCatalog(filter){
+const q = (filter || "").trim().toLowerCase();
+const list = $("catalogList");
+list.innerHTML = "";
+const items = ACTIVITY_CATALOG.filter(it => {
+if (!q) return true;
+return (it.name + " " + it.category + " " + (it.location||"") + " " + (it.provider||""))
+.toLowerCase().includes(q);
+});
+if (!items.length){
+const div = document.createElement("div");
+div.className = "row";
+div.style.cursor = "default";
+div.innerHTML = `<div class="rleft"><div class="rname">No matches</div><div class="rmeta">Try a different search.</div></div>`;
+list.appendChild(div);
+return;
+}
+items.forEach(it => {
+const div = document.createElement("div");
+div.className = "row";
+div.innerHTML = `
+<div class="rleft">
+<div class="rname">${escapeHtml(it.name)}</div>
+<div class="rmeta">${escapeHtml(it.category)} • ${escapeHtml(it.location || "Location TBD")}</div>
+</div>
+<div class="badge">${escapeHtml(it.provider || "—")}</div>
+`;
+div.addEventListener("click", () => {
+setField("activityCategory", it.category);
+setField("activityName", it.name);
+if (it.location) setField("activityLocation", it.location);
+if (it.provider) setField("providerName", it.provider);
+closeCatalog();
+toast("Filled from catalog selection.");
+});
+list.appendChild(div);
+});
+}
+
+function escapeHtml(str){
+return String(str || "")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+}
+
+// -------------------------
+// Wiring
+// -------------------------
+$("requestReceivedAt").value = nowLocalDatetimeValue();
+$("parseBtn").addEventListener("click", () => {
+const text = $("emailPaste").value || "";
+const payload = tryParse(text);
+applyPayload(payload);
+toast("Parsed what I could from the text.");
+});
+$("clearPasteBtn").addEventListener("click", () => {
+$("emailPaste").value = "";
+toast("Paste box cleared.");
+});
+$("loadDraftBtn").addEventListener("click", loadDraft);
+$("wipeDraftBtn").addEventListener("click", wipeDraft);
+$("openCatalogBtn").addEventListener("click", openCatalog);
+$("closeCatalogBtn").addEventListener("click", closeCatalog);
+$("catalogBackdrop").addEventListener("click", (e) => {
+if (e.target === $("catalogBackdrop")) closeCatalog();
+});
+$("catalogSearch").addEventListener("input", (e) => renderCatalog(e.target.value));
+$("copySummaryBtn").addEventListener("click", () => {
+const data = getFormData();
+copyToClipboard(buildSummary(data));
+});
+$("copyJsonBtn").addEventListener("click", () => {
+const data = getFormData();
+copyToClipboard(JSON.stringify(data, null, 2));
+});
+$("resetBtn").addEventListener("click", resetForm);
+$("bookingForm").addEventListener("submit", (e) => {
+e.preventDefault();
+saveDraft();
+});
+document.addEventListener("input", () => {
+$("draftStatus").textContent = "Edited (not saved)";
+}, { capture: true });
+</script>
+</body>
+</html>
