@@ -1148,7 +1148,7 @@ async function setSelectField(fieldId, value, delay = 150) {
 }
 
 async function runDemoFill() {
-  const fieldDelay = 600; // pause between fields
+  const fieldDelay = 500; // pause between fields
 
   await typeIntoField("agentName", "Maria Santos");
   await new Promise(r => setTimeout(r, fieldDelay));
