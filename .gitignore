@@ -28,3 +28,6 @@ ENV/
 *.swp
 *.swo
 .DS_Store
+
+# Claude credentials
+.claude/gitignore/
