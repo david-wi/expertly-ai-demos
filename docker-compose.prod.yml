@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demos-app
+    expose:
+      - "8000"
+    networks:
+      - coolify
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.demos.rule=Host(`demos.ai.devintensive.com`)"
+      - "traefik.http.routers.demos.entrypoints=https"
+      - "traefik.http.routers.demos.tls=true"
+      - "traefik.http.routers.demos.tls.certresolver=letsencrypt"
+      - "traefik.http.services.demos.loadbalancer.server.port=8000"
+
+networks:
+  coolify:
+    external: true
